@@ -41,7 +41,7 @@
                             <label asp-for="Manga.TomesTotal" class="form-label fw-semibold"></label>
                             <input asp-for="Manga.TomesTotal" class="form-control" type="number" min="0" />
                             <span asp-validation-for="Manga.TomesTotal" class="text-danger small"></span>
-                            <div class="form-text">Optionnel - Le nombre total de tomes du manga.</div>
+                            <div class="form-text">Optionnel - Si vide ou à 0, le système tente de récupérer automatiquement le nombre total de tomes à partir du titre.</div>
                         </div>
                         <div class="col-6">
                             <label asp-for="Manga.TomesPossedes" class="form-label fw-semibold"></label>

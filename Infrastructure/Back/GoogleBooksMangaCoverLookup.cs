@@ -1,9 +1,10 @@
 using System.Text.Json;
+using System.Text;
 using site_manga_home.Application.Back.Interfaces;
 
 namespace site_manga_home.Infrastructure.Back;
 
-public sealed class GoogleBooksMangaCoverLookup(HttpClient httpClient) : IMangaCoverLookup
+public sealed class GoogleBooksMangaCoverLookup(HttpClient httpClient) : IMangaCoverLookup, IMangaSeriesLookup
 {
     public async Task<string?> FindTomeOneCoverUrlAsync(string titre, CancellationToken cancellationToken = default)
     {
@@ -18,6 +19,51 @@ public sealed class GoogleBooksMangaCoverLookup(HttpClient httpClient) : IMangaC
             return coverFromOpenLibrary;
 
         return null;
+    }
+
+    public async Task<int?> FindTotalVolumesAsync(string titre, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(titre)) return null;
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, "https://graphql.anilist.co")
+        {
+            Content = new StringContent(BuildAniListSearchPayload(titre), Encoding.UTF8, "application/json")
+        };
+
+        using var response = await httpClient.SendAsync(request, cancellationToken);
+        if (!response.IsSuccessStatusCode) return null;
+
+        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        using var json = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
+
+        if (!json.RootElement.TryGetProperty("data", out var data)
+            || !data.TryGetProperty("Page", out var page)
+            || !page.TryGetProperty("media", out var media)
+            || media.ValueKind != JsonValueKind.Array)
+        {
+            return null;
+        }
+
+        var normalizedSearchTitle = NormalizeForComparison(titre);
+        int? fallback = null;
+
+        foreach (var item in media.EnumerateArray())
+        {
+            if (!item.TryGetProperty("volumes", out var volumesElement)
+                || volumesElement.ValueKind != JsonValueKind.Number
+                || !volumesElement.TryGetInt32(out var volumes)
+                || volumes <= 0)
+            {
+                continue;
+            }
+
+            fallback ??= volumes;
+
+            if (TitleMatches(item, normalizedSearchTitle))
+                return volumes;
+        }
+
+        return fallback;
     }
 
     private async Task<string?> FindFromGoogleBooksAsync(string titre, CancellationToken cancellationToken)
@@ -146,6 +192,66 @@ public sealed class GoogleBooksMangaCoverLookup(HttpClient httpClient) : IMangaC
             || normalized.Contains("volume 1")
             || normalized.EndsWith(" 1")
             || normalized.Contains("#1");
+    }
+
+    private static bool TitleMatches(JsonElement item, string normalizedSearchTitle)
+    {
+        if (!item.TryGetProperty("title", out var titleElement))
+            return false;
+
+        foreach (var propertyName in new[] { "romaji", "english", "native", "userPreferred" })
+        {
+            var candidate = GetString(titleElement, propertyName);
+            if (IsMatchingTitle(candidate, normalizedSearchTitle))
+                return true;
+        }
+
+        if (item.TryGetProperty("synonyms", out var synonyms) && synonyms.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var synonym in synonyms.EnumerateArray())
+            {
+                if (synonym.ValueKind == JsonValueKind.String && IsMatchingTitle(synonym.GetString(), normalizedSearchTitle))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsMatchingTitle(string? candidate, string normalizedSearchTitle)
+    {
+        var normalizedCandidate = NormalizeForComparison(candidate);
+        if (string.IsNullOrWhiteSpace(normalizedCandidate))
+            return false;
+
+        return normalizedCandidate.Equals(normalizedSearchTitle, StringComparison.Ordinal)
+            || normalizedCandidate.Contains(normalizedSearchTitle, StringComparison.Ordinal)
+            || normalizedSearchTitle.Contains(normalizedCandidate, StringComparison.Ordinal);
+    }
+
+    private static string NormalizeForComparison(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+
+        var chars = value
+            .Trim()
+            .ToLowerInvariant()
+            .Where(char.IsLetterOrDigit)
+            .ToArray();
+
+        return new string(chars);
+    }
+
+    private static string BuildAniListSearchPayload(string titre)
+    {
+        return JsonSerializer.Serialize(new
+        {
+            query = "query ($search: String) { Page(perPage: 10) { media(search: $search, type: MANGA, sort: SEARCH_MATCH) { volumes title { romaji english native userPreferred } synonyms } } }",
+            variables = new
+            {
+                search = titre
+            }
+        });
     }
 
     private static string? GetString(JsonElement element, string propertyName)

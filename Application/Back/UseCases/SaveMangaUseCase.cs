@@ -5,10 +5,18 @@ namespace site_manga_home.Application.Back.UseCases;
 
 public sealed class SaveMangaUseCase(
     IMangaRepository repository,
-    IMangaCoverLookup mangaCoverLookup)
+    IMangaCoverLookup mangaCoverLookup,
+    IMangaSeriesLookup mangaSeriesLookup)
 {
     public async Task ExecuteAsync(Manga manga, CancellationToken cancellationToken = default)
     {
+        if (manga.TomesTotal <= 0)
+        {
+            var foundTotalVolumes = await mangaSeriesLookup.FindTotalVolumesAsync(manga.Titre, cancellationToken);
+            if (foundTotalVolumes is > 0)
+                manga.TomesTotal = foundTotalVolumes.Value;
+        }
+
         manga.TomesPossedesNumeros = manga.TomesPossedesNumeros
             .Where(tome => tome >= 1 && tome <= manga.TomesTotal)
             .Distinct()

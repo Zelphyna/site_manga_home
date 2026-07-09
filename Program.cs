@@ -25,6 +25,11 @@ builder.Services.AddHttpClient<IMangaCoverLookup, GoogleBooksMangaCoverLookup>(c
     client.BaseAddress = new Uri("https://www.googleapis.com/books/v1/");
     client.DefaultRequestHeaders.UserAgent.ParseAdd("site_manga_home/1.0");
 });
+builder.Services.AddHttpClient<IMangaSeriesLookup, GoogleBooksMangaCoverLookup>(client =>
+{
+    client.BaseAddress = new Uri("https://www.googleapis.com/books/v1/");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("site_manga_home/1.0");
+});
 builder.Services.AddHostedService<MangaCoverWarmupHostedService>();
 
 builder.Services.AddScoped<GetMangaListUseCase>();
