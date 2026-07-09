@@ -27,8 +27,9 @@
 
                     <div class="mb-3">
                         <label asp-for="Manga.CoverUrl" class="form-label fw-semibold"></label>
-                        <input asp-for="Manga.CoverUrl" class="form-control" placeholder="https://..." />
+                        <input asp-for="Manga.CoverUrl" class="form-control" placeholder="Laisser vide pour chercher automatiquement la couverture du tome 1" />
                         <span asp-validation-for="Manga.CoverUrl" class="text-danger small"></span>
+                        <div class="form-text">Si vide, le systeme tente de recuperer automatiquement la couverture du tome 1 via Google Books.</div>
                         @if (!string.IsNullOrEmpty(Model.Manga.CoverUrl))
                         {
                             <img src="@Model.Manga.CoverUrl" alt="Aperçu" class="mt-2 manga-thumb-preview" />

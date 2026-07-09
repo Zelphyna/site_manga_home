@@ -10,7 +10,6 @@ public sealed class Manga
     [MaxLength(200)]
     public string Titre { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "L'URL de couverture est obligatoire")]
     [MaxLength(500)]
     [Display(Name = "URL de couverture")]
     public string CoverUrl { get; set; } = string.Empty;

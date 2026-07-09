@@ -2,6 +2,7 @@ using site_manga_home.Application.Back.Interfaces;
 using site_manga_home.Application.Back.UseCases;
 using site_manga_home.Application.Front.Interfaces;
 using site_manga_home.Application.Front.UseCases;
+using site_manga_home.Infrastructure.Back;
 using site_manga_home.Infrastructure;
 using Microsoft.AspNetCore.HttpOverrides;
 
@@ -19,6 +20,11 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.AddScoped<MangaRepository>();
 builder.Services.AddScoped<IMangaReadRepository>(sp => sp.GetRequiredService<MangaRepository>());
 builder.Services.AddScoped<IMangaRepository>(sp => sp.GetRequiredService<MangaRepository>());
+builder.Services.AddHttpClient<IMangaCoverLookup, GoogleBooksMangaCoverLookup>(client =>
+{
+    client.BaseAddress = new Uri("https://www.googleapis.com/books/v1/");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("site_manga_home/1.0");
+});
 
 builder.Services.AddScoped<GetMangaListUseCase>();
 builder.Services.AddScoped<GetMangaListBackUseCase>();

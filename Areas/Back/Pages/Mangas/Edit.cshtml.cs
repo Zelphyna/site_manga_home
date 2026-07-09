@@ -23,10 +23,10 @@ public sealed class EditModel(
         return Page();
     }
 
-    public IActionResult OnPost()
+    public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid) return Page();
-        saveMangaUseCase.Execute(Manga);
+        await saveMangaUseCase.ExecuteAsync(Manga, cancellationToken);
         return RedirectToPage("/Index", new { area = "Back" });
     }
 }
