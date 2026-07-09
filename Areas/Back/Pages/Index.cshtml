@@ -17,7 +17,6 @@
 }
 else
 {
-    @Html.AntiForgeryToken()
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead class="table-dark">
@@ -36,22 +35,12 @@ else
                     var pct = manga.TomesTotal > 0 ? manga.TomesPossedes * 100 / manga.TomesTotal : 0;
                     <tr>
                         <td>
-                            <img src="@manga.CoverUrl" alt="@manga.Titre" class="manga-thumb" />
+                            <a asp-area="Front" asp-page="/Mangas/Collection" asp-route-id="@manga.Id" class="cover-link" aria-label="Voir les tomes de @manga.Titre">
+                                <img src="@manga.CoverUrl" alt="@manga.Titre" class="manga-thumb" />
+                            </a>
                         </td>
                         <td class="fw-semibold">@manga.Titre</td>
-                        <td class="text-center">
-                            <div class="tomes-counter">
-                                <button class="btn btn-sm btn-outline-secondary"
-                                        hx-post="?handler=Decrement&id=@manga.Id"
-                                        hx-target="#tomes-@manga.Id"
-                                        hx-swap="innerHTML">−</button>
-                                <span id="tomes-@manga.Id" class="fw-bold">@manga.TomesPossedes</span>
-                                <button class="btn btn-sm btn-outline-secondary"
-                                        hx-post="?handler=Increment&id=@manga.Id"
-                                        hx-target="#tomes-@manga.Id"
-                                        hx-swap="innerHTML">+</button>
-                            </div>
-                        </td>
+                        <td class="text-center fw-bold">@manga.TomesPossedes</td>
                         <td class="text-center text-muted">@manga.TomesTotal</td>
                         <td class="text-center">
                             <div class="progress mb-1" style="height:6px">
@@ -75,13 +64,4 @@ else
             </tbody>
         </table>
     </div>
-}
-
-@section Scripts {
-    <script>
-        document.body.addEventListener('htmx:configRequest', (e) => {
-            const token = document.querySelector('input[name="__RequestVerificationToken"]');
-            if (token) e.detail.headers['RequestVerificationToken'] = token.value;
-        });
-    </script>
 }

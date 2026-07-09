@@ -44,8 +44,8 @@
                         </div>
                         <div class="col-6">
                             <label asp-for="Manga.TomesPossedes" class="form-label fw-semibold"></label>
-                            <input asp-for="Manga.TomesPossedes" class="form-control" type="number" min="0" />
-                            <span asp-validation-for="Manga.TomesPossedes" class="text-danger small"></span>
+                            <input asp-for="Manga.TomesPossedes" class="form-control" type="number" min="0" readonly />
+                            <div class="form-text">Ce nombre est calcule automatiquement depuis la page de collection du manga.</div>
                         </div>
                     </div>
 

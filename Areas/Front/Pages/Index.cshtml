@@ -24,7 +24,9 @@ else
             var pct = manga.TomesTotal > 0 ? manga.TomesPossedes * 100 / manga.TomesTotal : 0;
             <div class="manga-card">
                 <div class="manga-card-cover">
-                    <img src="@manga.CoverUrl" alt="@manga.Titre" loading="lazy" />
+                    <a asp-area="Front" asp-page="/Mangas/Collection" asp-route-id="@manga.Id" class="cover-link" aria-label="Voir les tomes de @manga.Titre">
+                        <img src="@manga.CoverUrl" alt="@manga.Titre" loading="lazy" />
+                    </a>
                 </div>
                 <div class="manga-card-body">
                     <h5 class="manga-title" title="@manga.Titre">@manga.Titre</h5>

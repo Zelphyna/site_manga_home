@@ -7,8 +7,7 @@ namespace site_manga_home.Areas.Back.Pages;
 
 public sealed class IndexModel(
     GetMangaListBackUseCase getMangaListUseCase,
-    DeleteMangaUseCase deleteMangaUseCase,
-    UpdateTomesPossedesUseCase updateTomesPossedesUseCase) : PageModel
+    DeleteMangaUseCase deleteMangaUseCase) : PageModel
 {
     public IReadOnlyList<Manga> Mangas { get; private set; } = [];
 
@@ -21,17 +20,5 @@ public sealed class IndexModel(
     {
         deleteMangaUseCase.Execute(id);
         return RedirectToPage();
-    }
-
-    public IActionResult OnPostIncrement(int id)
-    {
-        var newValue = updateTomesPossedesUseCase.Increment(id);
-        return Content(newValue.ToString());
-    }
-
-    public IActionResult OnPostDecrement(int id)
-    {
-        var newValue = updateTomesPossedesUseCase.Decrement(id);
-        return Content(newValue.ToString());
     }
 }

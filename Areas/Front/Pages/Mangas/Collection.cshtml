@@ -1,0 +1,77 @@
+@page "{id:int}"
+@model site_manga_home.Areas.Front.Pages.Mangas.CollectionModel
+@{
+    ViewData["Title"] = $"Collection - {Model.Manga.Titre}";
+}
+
+<div class="pt-3 mb-4 d-flex justify-content-between align-items-center gap-3 flex-wrap">
+    <a class="text-muted text-decoration-none" asp-area="Front" asp-page="/Index">&larr; Retour a la collection</a>
+    <a class="btn btn-outline-secondary btn-sm" asp-area="Back" asp-page="/Mangas/Edit" asp-route-id="@Model.Manga.Id">Modifier ce manga</a>
+</div>
+
+<div class="row g-4 pb-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <img src="@Model.Manga.CoverUrl" alt="@Model.Manga.Titre" class="manga-cover-large mb-3" />
+                <h1 class="h4 fw-bold mb-2">@Model.Manga.Titre</h1>
+                <p class="mb-1">
+                    <strong>@Model.Manga.TomesPossedes</strong>
+                    <span class="text-muted"> / @Model.Manga.TomesTotal tomes possedes</span>
+                </p>
+                @{ var pct = Model.Manga.TomesTotal > 0 ? Model.Manga.TomesPossedes * 100 / Model.Manga.TomesTotal : 0; }
+                <div class="manga-progress mt-2" title="@pct%">
+                    <div class="manga-progress-bar" style="width: @pct%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <span>Mes tomes</span>
+                <span class="badge bg-light text-dark">@Model.Manga.TomesTotal tomes</span>
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="alert alert-success py-2" role="alert">@Model.SuccessMessage</div>
+                }
+
+                <form method="post">
+                    <div class="tomes-grid mb-3">
+                        @for (var tome = 1; tome <= Model.Manga.TomesTotal; tome++)
+                        {
+                            var isOwned = Model.OwnedTomes.Contains(tome);
+                            <label class="tome-item @(isOwned ? "owned" : string.Empty)" for="tome-@tome">
+                                @if (isOwned)
+                                {
+                                    <input id="tome-@tome"
+                                           class="form-check-input"
+                                           type="checkbox"
+                                           name="ownedTomes"
+                                           value="@tome"
+                                           checked />
+                                }
+                                else
+                                {
+                                    <input id="tome-@tome"
+                                           class="form-check-input"
+                                           type="checkbox"
+                                           name="ownedTomes"
+                                           value="@tome" />
+                                }
+                                <span class="tome-number">Tome @tome</span>
+                            </label>
+                        }
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Enregistrer mes tomes possedes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

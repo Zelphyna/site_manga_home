@@ -9,8 +9,13 @@ public sealed class SaveMangaUseCase(
 {
     public async Task ExecuteAsync(Manga manga, CancellationToken cancellationToken = default)
     {
-        if (manga.TomesPossedes > manga.TomesTotal)
-            manga.TomesPossedes = manga.TomesTotal;
+        manga.TomesPossedesNumeros = manga.TomesPossedesNumeros
+            .Where(tome => tome >= 1 && tome <= manga.TomesTotal)
+            .Distinct()
+            .OrderBy(tome => tome)
+            .ToList();
+
+        manga.TomesPossedes = manga.TomesPossedesNumeros.Count;
 
         if (string.IsNullOrWhiteSpace(manga.CoverUrl))
         {

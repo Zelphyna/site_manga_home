@@ -49,11 +49,25 @@ body {
   background: #f0f0f0;
 }
 
+.cover-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
 .manga-card-cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.cover-link img {
+  transition: transform 0.2s ease;
+}
+
+.cover-link:hover img {
+  transform: scale(1.03);
 }
 
 .manga-card-body {
@@ -127,6 +141,49 @@ body {
   text-align: center;
   font-weight: 700;
   font-size: 1rem;
+}
+
+.manga-cover-large {
+  width: 180px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.tomes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  gap: 0.55rem;
+  max-height: 460px;
+  overflow: auto;
+  padding-right: 0.2rem;
+}
+
+.tome-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid #d9dee7;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.tome-item:hover {
+  border-color: #7c8ca3;
+  background: #f8fafc;
+}
+
+.tome-item.owned {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+
+.tome-number {
+  font-size: 0.9rem;
 }
 
 /* ── Misc ────────────────────────────────────────────────────── */

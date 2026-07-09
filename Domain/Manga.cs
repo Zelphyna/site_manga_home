@@ -21,4 +21,6 @@ public sealed class Manga
     [Range(0, 9999, ErrorMessage = "Le nombre de tomes possédés doit être entre 0 et 9999")]
     [Display(Name = "Tomes possédés")]
     public int TomesPossedes { get; set; }
+
+    public List<int> TomesPossedesNumeros { get; set; } = [];
 }
