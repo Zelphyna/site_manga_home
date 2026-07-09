@@ -6,14 +6,14 @@ using site_manga_home.Domain;
 namespace site_manga_home.Areas.Back.Pages;
 
 public sealed class ManagementModel(
-    GetMangaListBackUseCase getMangaListUseCase,
+    GetMangaListBackUseCase getMangaListBackUseCase,
     DeleteMangaUseCase deleteMangaUseCase) : PageModel
 {
     public IReadOnlyList<Manga> Mangas { get; private set; } = [];
 
     public void OnGet()
     {
-        Mangas = getMangaListUseCase.Execute();
+        Mangas = getMangaListBackUseCase.Execute();
     }
 
     public IActionResult OnPostDelete(int id)

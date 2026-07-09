@@ -27,6 +27,6 @@ public sealed class EditModel(
     {
         if (!ModelState.IsValid) return Page();
         await saveMangaUseCase.ExecuteAsync(Manga, cancellationToken);
-        return RedirectToPage("/Index", new { area = "Back" });
+        return Redirect("/Back/Management");
     }
 }

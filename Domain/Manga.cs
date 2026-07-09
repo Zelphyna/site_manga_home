@@ -12,9 +12,9 @@ public sealed class Manga
 
     [MaxLength(500)]
     [Display(Name = "URL de couverture")]
-    public string CoverUrl { get; set; } = string.Empty;
+    public string? CoverUrl { get; set; }
 
-    [Range(1, 9999, ErrorMessage = "Le nombre de tomes doit être entre 1 et 9999")]
+    [Range(0, 9999, ErrorMessage = "Le nombre de tomes doit être entre 0 et 9999")]
     [Display(Name = "Tomes total")]
     public int TomesTotal { get; set; }
 

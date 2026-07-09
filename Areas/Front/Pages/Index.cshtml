@@ -1,4 +1,4 @@
-@page "/"
+@page
 @model site_manga_home.Areas.Front.Pages.IndexModel
 @{
     ViewData["Title"] = "Ma Collection";
@@ -8,7 +8,7 @@
     <h1 class="h2 fw-bold">Ma Collection de Mangas</h1>
     <div class="d-flex align-items-center gap-3">
         <span class="badge bg-secondary fs-6">@Model.Mangas.Count titre@(Model.Mangas.Count > 1 ? "s" : "")</span>
-        <a class="btn btn-outline-primary" asp-area="Back" asp-page="/Management">Gérer</a>
+        <a class="btn btn-outline-primary" asp-area="Back" asp-page="/Index">Gérer</a>
     </div>
 </div>
 

@@ -6,7 +6,7 @@
 }
 
 <div class="pt-3 mb-4">
-    <a class="text-muted text-decoration-none" asp-area="Back" asp-page="/Index">&larr; Retour à la liste</a>
+    <a class="text-muted text-decoration-none" asp-area="Back" asp-page="/Management">&larr; Retour à la liste</a>
 </div>
 
 <div class="row justify-content-center">
@@ -39,18 +39,19 @@
                     <div class="row g-3 mb-4">
                         <div class="col-6">
                             <label asp-for="Manga.TomesTotal" class="form-label fw-semibold"></label>
-                            <input asp-for="Manga.TomesTotal" class="form-control" type="number" min="1" />
+                            <input asp-for="Manga.TomesTotal" class="form-control" type="number" min="0" />
                             <span asp-validation-for="Manga.TomesTotal" class="text-danger small"></span>
+                            <div class="form-text">Optionnel - Le nombre total de tomes du manga.</div>
                         </div>
                         <div class="col-6">
                             <label asp-for="Manga.TomesPossedes" class="form-label fw-semibold"></label>
                             <input asp-for="Manga.TomesPossedes" class="form-control" type="number" min="0" readonly />
-                            <div class="form-text">Ce nombre est calcule automatiquement depuis la page de collection du manga.</div>
+                            <div class="form-text">Calculé automatiquement depuis la page de collection.</div>
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-end gap-2">
-                        <a class="btn btn-outline-secondary" asp-area="Back" asp-page="/Index">Annuler</a>
+                        <a class="btn btn-outline-secondary" asp-area="Back" asp-page="/Management">Annuler</a>
                         <button type="submit" class="btn btn-primary">
                             @(isEdit ? "Enregistrer les modifications" : "Ajouter")
                         </button>

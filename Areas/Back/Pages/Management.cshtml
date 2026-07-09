@@ -1,65 +1,55 @@
-@page "/back"
+@page
 @model site_manga_home.Areas.Back.Pages.ManagementModel
 @{
-    ViewData["Title"] = "Gestion des Mangas";
+    ViewData["Title"] = "Gestion des mangas";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4 pt-3">
-    <h1 class="h2 fw-bold">Gestion des Mangas</h1>
-    <div class="d-flex gap-2">
-        <a class="btn btn-outline-secondary" asp-area="Front" asp-page="/Index">← Retour à la collection</a>
-        <a class="btn btn-primary" asp-area="Back" asp-page="/Mangas/Edit">+ Ajouter un manga</a>
-    </div>
+<div class="pt-3 mb-4">
+    <a class="text-muted text-decoration-none" asp-area="Front" asp-page="/Index">&larr; Retour à la collection</a>
 </div>
 
-@if (!Model.Mangas.Any())
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">Mangas</h1>
+    <a class="btn btn-primary" asp-area="Back" asp-page="/Mangas/Edit">+ Ajouter un manga</a>
+</div>
+
+@if (Model.Mangas.Count == 0)
 {
-    <div class="text-center py-5 text-muted">
-        <p class="fs-5">Aucun manga enregistré.</p>
+    <div class="alert alert-info">
+        Aucun manga actuellement.
+        <a asp-area="Back" asp-page="/Mangas/Edit">Ajouter le premier manga</a>
     </div>
 }
 else
 {
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table class="table table-hover">
             <thead class="table-dark">
                 <tr>
-                    <th style="width:60px">Cover</th>
                     <th>Titre</th>
-                    <th class="text-center">Tomes possédés</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center" style="width:160px">Progression</th>
-                    <th class="text-end" style="width:160px">Actions</th>
+                    <th>Couverture</th>
+                    <th>Tomes total</th>
+                    <th>Tomes possédés</th>
+                    <th class="text-end">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var manga in Model.Mangas)
                 {
-                    var pct = manga.TomesTotal > 0 ? manga.TomesPossedes * 100 / manga.TomesTotal : 0;
                     <tr>
-                        <td>
-                            <a asp-area="Front" asp-page="/Mangas/Collection" asp-route-id="@manga.Id" class="cover-link" aria-label="Voir les tomes de @manga.Titre">
-                                <img src="@manga.CoverUrl" alt="@manga.Titre" class="manga-thumb" />
-                            </a>
+                        <td class="align-middle">@manga.Titre</td>
+                        <td class="align-middle">
+                            @if (!string.IsNullOrEmpty(manga.CoverUrl))
+                            {
+                                <img src="@manga.CoverUrl" alt="@manga.Titre" style="max-height: 60px;" />
+                            }
                         </td>
-                        <td class="fw-semibold">@manga.Titre</td>
-                        <td class="text-center fw-bold">@manga.TomesPossedes</td>
-                        <td class="text-center text-muted">@manga.TomesTotal</td>
-                        <td class="text-center">
-                            <div class="progress mb-1" style="height:6px">
-                                <div class="progress-bar bg-success" style="width:@pct%"></div>
-                            </div>
-                            <small class="text-muted">@pct%</small>
-                        </td>
-                        <td class="text-end">
-                            <a class="btn btn-sm btn-outline-primary me-1"
-                               asp-area="Back" asp-page="/Mangas/Edit" asp-route-id="@manga.Id">Modifier</a>
-                            <form method="post" class="d-inline">
-                                <button type="submit"
-                                        asp-page-handler="Delete"
-                                        asp-route-id="@manga.Id"
-                                        class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Supprimer @Html.Raw(manga.Titre.Replace("'", "\\'")) ?')">Supprimer</button>
+                        <td class="align-middle">@(manga.TomesTotal > 0 ? manga.TomesTotal.ToString() : "—")</td>
+                        <td class="align-middle">@(manga.TomesPossedes > 0 ? manga.TomesPossedes.ToString() : "—")</td>
+                        <td class="align-middle text-end">
+                            <a class="btn btn-sm btn-outline-primary" asp-area="Back" asp-page="/Mangas/Edit" asp-route-id="@manga.Id">Modifier</a>
+                            <form method="post" asp-page-handler="delete" asp-route-id="@manga.Id" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
                             </form>
                         </td>
                     </tr>
