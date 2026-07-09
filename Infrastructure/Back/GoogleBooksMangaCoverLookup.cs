@@ -65,7 +65,21 @@ public sealed class GoogleBooksMangaCoverLookup(HttpClient httpClient) : IMangaC
     private async Task<string?> FindFromOpenLibraryAsync(string titre, CancellationToken cancellationToken)
     {
         var query = Uri.EscapeDataString(titre);
-        var requestUri = $"https://openlibrary.org/search.json?title={query}&language=fre&limit=12";
+        
+        // Première tentative: chercher en français
+        var result = await SearchOpenLibraryAsync(query, "fre", cancellationToken);
+        if (!string.IsNullOrWhiteSpace(result))
+            return result;
+
+        // Fallback: chercher tous les résultats sans restriction de langue
+        return await SearchOpenLibraryAsync(query, null, cancellationToken);
+    }
+
+    private async Task<string?> SearchOpenLibraryAsync(string query, string? language, CancellationToken cancellationToken)
+    {
+        var requestUri = language is not null
+            ? $"https://openlibrary.org/search.json?title={query}&language={language}&limit=12"
+            : $"https://openlibrary.org/search.json?title={query}&limit=20";
 
         using var response = await httpClient.GetAsync(requestUri, cancellationToken);
         if (!response.IsSuccessStatusCode) return null;

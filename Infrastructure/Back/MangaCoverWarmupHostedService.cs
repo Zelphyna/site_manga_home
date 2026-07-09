@@ -41,6 +41,9 @@ public sealed class MangaCoverWarmupHostedService(
             {
                 logger.LogWarning(ex, "Impossible de recuperer une couverture distante pour {Titre}", manga.Titre);
             }
+
+            // Délai pour éviter de surcharger les APIs externes
+            await Task.Delay(250, cancellationToken);
         }
     }
 
