@@ -1,24 +1,29 @@
+using site_manga_home.Application.Back.Interfaces;
+using site_manga_home.Application.Back.UseCases;
+using site_manga_home.Application.Front.Interfaces;
+using site_manga_home.Application.Front.UseCases;
+using site_manga_home.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<site_manga_home.Infrastructure.MangaRepository>();
-builder.Services.AddSingleton<site_manga_home.Application.Front.Interfaces.IMangaReadRepository>(
-    sp => sp.GetRequiredService<site_manga_home.Infrastructure.MangaRepository>());
-builder.Services.AddSingleton<site_manga_home.Application.Back.Interfaces.IMangaRepository>(
-    sp => sp.GetRequiredService<site_manga_home.Infrastructure.MangaRepository>());
+builder.Services.AddResponseCompression();
 
-builder.Services.AddScoped<site_manga_home.Application.Front.UseCases.GetMangaListUseCase>();
-builder.Services.AddScoped<site_manga_home.Application.Back.UseCases.GetMangaListBackUseCase>();
-builder.Services.AddScoped<site_manga_home.Application.Back.UseCases.GetMangaByIdUseCase>();
-builder.Services.AddScoped<site_manga_home.Application.Back.UseCases.SaveMangaUseCase>();
-builder.Services.AddScoped<site_manga_home.Application.Back.UseCases.DeleteMangaUseCase>();
-builder.Services.AddScoped<site_manga_home.Application.Back.UseCases.UpdateTomesPossedesUseCase>();
+builder.Services.AddScoped<MangaRepository>();
+builder.Services.AddScoped<IMangaReadRepository>(sp => sp.GetRequiredService<MangaRepository>());
+builder.Services.AddScoped<IMangaRepository>(sp => sp.GetRequiredService<MangaRepository>());
+
+builder.Services.AddScoped<GetMangaListUseCase>();
+builder.Services.AddScoped<GetMangaListBackUseCase>();
+builder.Services.AddScoped<GetMangaByIdUseCase>();
+builder.Services.AddScoped<SaveMangaUseCase>();
+builder.Services.AddScoped<UpdateTomesPossedesUseCase>();
+builder.Services.AddScoped<DeleteMangaUseCase>();
 
 builder.Services.AddRazorPages(options =>
 {
-    options.Conventions.AddAreaPageRoute("Front", "/Index", "");
+    options.Conventions.AddAreaPageRoute("Front", "/Index", "/");
     options.Conventions.AddAreaPageRoute("Back", "/Index", "back");
-    options.Conventions.AddAreaPageRoute("Back", "/Mangas/Edit", "back/mangas/edit");
 });
 
 var app = builder.Build();
@@ -27,18 +32,28 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
+app.UseResponseCompression();
 app.UseHttpsRedirection();
 
-app.UseRouting();
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Frame-Options", "SAMEORIGIN");
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    await next();
+});
 
+app.UseRouting();
 app.UseAuthorization();
+
+app.MapGet("/Index", () => Results.Redirect("/"));
 
 app.MapStaticAssets();
 app.MapRazorPages()
    .WithStaticAssets();
 
 app.Run();
+
