@@ -5,7 +5,7 @@ using site_manga_home.Domain;
 
 namespace site_manga_home.Areas.Back.Pages;
 
-public sealed class IndexModel(
+public sealed class ManagementModel(
     GetMangaListBackUseCase getMangaListUseCase,
     DeleteMangaUseCase deleteMangaUseCase) : PageModel
 {

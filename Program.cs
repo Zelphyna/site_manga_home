@@ -25,6 +25,7 @@ builder.Services.AddHttpClient<IMangaCoverLookup, GoogleBooksMangaCoverLookup>(c
     client.BaseAddress = new Uri("https://www.googleapis.com/books/v1/");
     client.DefaultRequestHeaders.UserAgent.ParseAdd("site_manga_home/1.0");
 });
+builder.Services.AddHostedService<MangaCoverWarmupHostedService>();
 
 builder.Services.AddScoped<GetMangaListUseCase>();
 builder.Services.AddScoped<GetMangaListBackUseCase>();
@@ -33,11 +34,7 @@ builder.Services.AddScoped<SaveMangaUseCase>();
 builder.Services.AddScoped<UpdateTomesPossedesUseCase>();
 builder.Services.AddScoped<DeleteMangaUseCase>();
 
-builder.Services.AddRazorPages(options =>
-{
-    options.Conventions.AddAreaPageRoute("Front", "/Index", "/");
-    options.Conventions.AddAreaPageRoute("Back", "/Index", "back");
-});
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -63,8 +60,6 @@ app.Use(async (context, next) =>
 
 app.UseRouting();
 app.UseAuthorization();
-
-app.MapGet("/Index", () => Results.Redirect("/"));
 
 app.MapStaticAssets();
 app.MapRazorPages()

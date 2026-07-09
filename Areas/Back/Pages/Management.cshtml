@@ -1,12 +1,15 @@
-@page
-@model site_manga_home.Areas.Back.Pages.IndexModel
+@page "/back"
+@model site_manga_home.Areas.Back.Pages.ManagementModel
 @{
     ViewData["Title"] = "Gestion des Mangas";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4 pt-3">
     <h1 class="h2 fw-bold">Gestion des Mangas</h1>
-    <a class="btn btn-primary" asp-area="Back" asp-page="/Mangas/Edit">+ Ajouter un manga</a>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" asp-area="Front" asp-page="/Index">← Retour à la collection</a>
+        <a class="btn btn-primary" asp-area="Back" asp-page="/Mangas/Edit">+ Ajouter un manga</a>
+    </div>
 </div>
 
 @if (!Model.Mangas.Any())
