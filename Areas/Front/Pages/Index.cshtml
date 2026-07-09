@@ -1,9 +1,42 @@
 @page
 @model site_manga_home.Areas.Front.Pages.IndexModel
 @{
-    ViewData["Title"] = "Accueil";
+    ViewData["Title"] = "Ma Collection";
 }
 
-<section class="landing-center">
-    <h1 class="landing-title">@Model.SiteTitle</h1>
-</section>
+<div class="d-flex justify-content-between align-items-center py-4">
+    <h1 class="h2 fw-bold">Ma Collection de Mangas</h1>
+    <span class="badge bg-secondary fs-6">@Model.Mangas.Count titre@(Model.Mangas.Count > 1 ? "s" : "")</span>
+</div>
+
+@if (!Model.Mangas.Any())
+{
+    <div class="text-center py-5 text-muted">
+        <p class="fs-5">Aucun manga dans la collection.</p>
+        <a class="btn btn-primary" asp-area="Back" asp-page="/Index">Ajouter des mangas</a>
+    </div>
+}
+else
+{
+    <div class="manga-grid">
+        @foreach (var manga in Model.Mangas)
+        {
+            var pct = manga.TomesTotal > 0 ? manga.TomesPossedes * 100 / manga.TomesTotal : 0;
+            <div class="manga-card">
+                <div class="manga-card-cover">
+                    <img src="@manga.CoverUrl" alt="@manga.Titre" loading="lazy" />
+                </div>
+                <div class="manga-card-body">
+                    <h5 class="manga-title" title="@manga.Titre">@manga.Titre</h5>
+                    <div class="manga-progress" title="@pct%">
+                        <div class="manga-progress-bar" style="width: @pct%"></div>
+                    </div>
+                    <p class="manga-volumes">
+                        <span class="volumes-owned">@manga.TomesPossedes</span>
+                        <span class="text-muted"> / @manga.TomesTotal tomes</span>
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+}

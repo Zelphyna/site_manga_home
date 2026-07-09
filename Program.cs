@@ -1,15 +1,24 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<site_manga_home.Application.Front.Interfaces.IFrontLandingReadRepository, site_manga_home.Infrastructure.Front.FrontLandingReadRepository>();
-builder.Services.AddScoped<site_manga_home.Application.Back.Interfaces.IBackDashboardReadRepository, site_manga_home.Infrastructure.Back.BackDashboardReadRepository>();
-builder.Services.AddScoped<site_manga_home.Application.Front.UseCases.GetFrontLandingUseCase>();
-builder.Services.AddScoped<site_manga_home.Application.Back.UseCases.GetBackDashboardUseCase>();
+builder.Services.AddSingleton<site_manga_home.Infrastructure.MangaRepository>();
+builder.Services.AddSingleton<site_manga_home.Application.Front.Interfaces.IMangaReadRepository>(
+    sp => sp.GetRequiredService<site_manga_home.Infrastructure.MangaRepository>());
+builder.Services.AddSingleton<site_manga_home.Application.Back.Interfaces.IMangaRepository>(
+    sp => sp.GetRequiredService<site_manga_home.Infrastructure.MangaRepository>());
+
+builder.Services.AddScoped<site_manga_home.Application.Front.UseCases.GetMangaListUseCase>();
+builder.Services.AddScoped<site_manga_home.Application.Back.UseCases.GetMangaListBackUseCase>();
+builder.Services.AddScoped<site_manga_home.Application.Back.UseCases.GetMangaByIdUseCase>();
+builder.Services.AddScoped<site_manga_home.Application.Back.UseCases.SaveMangaUseCase>();
+builder.Services.AddScoped<site_manga_home.Application.Back.UseCases.DeleteMangaUseCase>();
+builder.Services.AddScoped<site_manga_home.Application.Back.UseCases.UpdateTomesPossedesUseCase>();
 
 builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AddAreaPageRoute("Front", "/Index", "");
     options.Conventions.AddAreaPageRoute("Back", "/Index", "back");
+    options.Conventions.AddAreaPageRoute("Back", "/Mangas/Edit", "back/mangas/edit");
 });
 
 var app = builder.Build();

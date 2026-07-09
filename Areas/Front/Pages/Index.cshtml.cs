@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using site_manga_home.Application.Front.UseCases;
+using site_manga_home.Domain;
 
 namespace site_manga_home.Areas.Front.Pages;
 
-public sealed class IndexModel(GetFrontLandingUseCase getFrontLandingUseCase) : PageModel
+public sealed class IndexModel(GetMangaListUseCase getMangaListUseCase) : PageModel
 {
-    public string SiteTitle { get; private set; } = string.Empty;
+    public IReadOnlyList<Manga> Mangas { get; private set; } = [];
 
     public void OnGet()
     {
-        var landing = getFrontLandingUseCase.Execute();
-        SiteTitle = landing.Title;
+        Mangas = getMangaListUseCase.Execute();
     }
 }

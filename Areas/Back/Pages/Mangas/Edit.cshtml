@@ -1,0 +1,65 @@
+@page "{id:int?}"
+@model site_manga_home.Areas.Back.Pages.Mangas.EditModel
+@{
+    var isEdit = Model.Manga.Id != 0;
+    ViewData["Title"] = isEdit ? "Modifier un manga" : "Ajouter un manga";
+}
+
+<div class="pt-3 mb-4">
+    <a class="text-muted text-decoration-none" asp-area="Back" asp-page="/Index">&larr; Retour à la liste</a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h2 class="h5 mb-0">@ViewData["Title"]</h2>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <input type="hidden" asp-for="Manga.Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Manga.Titre" class="form-label fw-semibold"></label>
+                        <input asp-for="Manga.Titre" class="form-control" placeholder="Ex : One Piece" />
+                        <span asp-validation-for="Manga.Titre" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Manga.CoverUrl" class="form-label fw-semibold"></label>
+                        <input asp-for="Manga.CoverUrl" class="form-control" placeholder="https://..." />
+                        <span asp-validation-for="Manga.CoverUrl" class="text-danger small"></span>
+                        @if (!string.IsNullOrEmpty(Model.Manga.CoverUrl))
+                        {
+                            <img src="@Model.Manga.CoverUrl" alt="Aperçu" class="mt-2 manga-thumb-preview" />
+                        }
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <label asp-for="Manga.TomesTotal" class="form-label fw-semibold"></label>
+                            <input asp-for="Manga.TomesTotal" class="form-control" type="number" min="1" />
+                            <span asp-validation-for="Manga.TomesTotal" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="Manga.TomesPossedes" class="form-label fw-semibold"></label>
+                            <input asp-for="Manga.TomesPossedes" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="Manga.TomesPossedes" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a class="btn btn-outline-secondary" asp-area="Back" asp-page="/Index">Annuler</a>
+                        <button type="submit" class="btn btn-primary">
+                            @(isEdit ? "Enregistrer les modifications" : "Ajouter")
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -21,19 +21,121 @@ body {
   margin-bottom: 60px;
 }
 
-.landing-center {
-  min-height: calc(100vh - 220px);
+/* ── Manga Grid (Front) ─────────────────────────────────────── */
+
+.manga-grid {
   display: grid;
-  place-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  padding-bottom: 2rem;
 }
 
-.landing-title {
-  font-size: clamp(2rem, 6vw, 5rem);
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.manga-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  background: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.manga-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+}
+
+.manga-card-cover {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.manga-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.manga-card-body {
+  padding: 0.75rem;
+}
+
+.manga-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.5rem;
+  color: #1a1a2e;
+}
+
+.manga-progress {
+  height: 6px;
+  background: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.manga-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #e84393, #a855f7);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.manga-volumes {
+  font-size: 0.8rem;
+  color: #6c757d;
   margin: 0;
+}
+
+.volumes-owned {
+  color: #e84393;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* ── Back Office ────────────────────────────────────────────── */
+
+.manga-thumb {
+  width: 45px;
+  height: 63px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.manga-thumb-preview {
+  width: 100px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: block;
+}
+
+.tomes-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tomes-counter > span {
+  min-width: 2.2rem;
   text-align: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* ── Misc ────────────────────────────────────────────────────── */
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  line-height: 60px;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
