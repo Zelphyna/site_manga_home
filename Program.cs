@@ -3,11 +3,18 @@ using site_manga_home.Application.Back.UseCases;
 using site_manga_home.Application.Front.Interfaces;
 using site_manga_home.Application.Front.UseCases;
 using site_manga_home.Infrastructure;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddResponseCompression();
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddScoped<MangaRepository>();
 builder.Services.AddScoped<IMangaReadRepository>(sp => sp.GetRequiredService<MangaRepository>());
@@ -29,14 +36,16 @@ builder.Services.AddRazorPages(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseForwardedHeaders();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
 app.UseResponseCompression();
-app.UseHttpsRedirection();
 
 app.Use(async (context, next) =>
 {
