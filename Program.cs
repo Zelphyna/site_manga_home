@@ -62,6 +62,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+app.MapGet("/", context => { context.Response.Redirect("/Front/Index"); return Task.CompletedTask; });
 app.MapRazorPages()
    .WithStaticAssets();
 
